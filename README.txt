@@ -1,8 +1,9 @@
-AR DRAWING STUDIO
+AR DRAWING STUDIO — VERSION 2
 
-This is a starter Progressive Web App (PWA).
-Included: finger/stylus drawing, pencil, eraser, brush size, color, undo/redo, clear, background color, import tracing reference, opacity control, PNG export, local gallery, offline caching, install support.
+Included: finger/stylus drawing, pencil, eraser, brush size, color, undo/redo, clear, background color, import tracing reference, opacity control, PNG export, local gallery, offline caching, install support, built-in outline library, and guided beginner lessons.
 
-Not included yet: real augmented-reality camera overlay/alignment, layered editing, account/cloud sync, guided lessons/content library, native Android APK. These need additional development and testing.
+The built-in library and lessons work locally and need no paid API key.
 
-To publish free: upload the contents of this folder to a public GitHub repository, then enable Settings > Pages > Deploy from a branch > main > /(root). Open the published HTTPS URL on Android Chrome and use menu > Add to Home screen / Install.
+Not included yet: true augmented-reality camera overlay/alignment, advanced fill bucket/layers, cloud accounts/sync, large downloadable art packs, and native Android APK. These require additional development and testing.
+
+To update GitHub Pages: upload the contents of this ZIP into the existing repository, replacing the old files, then commit changes. Keep all files in the repository root. GitHub Pages will redeploy automatically.

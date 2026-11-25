@@ -17,6 +17,15 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}#trace
 .side h2{font-size:16px;margin:3px 0 12px}.side p{color:var(--muted);line-height:1.5;font-size:13px}.stack{display:grid;gap:9px}.stack button,.stack .filebtn{width:100%;text-align:left}.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}.thumb{background:#fff;border-radius:10px;overflow:hidden;aspect-ratio:1;position:relative}.thumb img{width:100%;height:100%;object-fit:contain}.thumb button{position:absolute;right:4px;top:4px;padding:4px 7px;background:#111c}
 .section{border-top:1px solid #ffffff18;margin-top:16px;padding-top:14px}.hint{font-size:12px;color:var(--muted);margin-top:10px}.hidden{display:none!important}
 @media(max-width:800px){main{grid-template-columns:1fr;padding:10px}.workspace{padding:10px}.brand small{display:none}}
+
+.libraryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.artCard{background:#202944;border:1px solid #34415f;border-radius:12px;padding:7px;color:#fff;text-align:center}
+.artCard img{width:100%;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:8px;display:block;margin-bottom:6px}
+.artCard span{font-size:12px}
+.lesson{background:#202944;border:1px solid #34415f;border-radius:12px;padding:11px;margin-bottom:9px}
+.lesson strong{display:block;margin-bottom:5px}.lesson p{margin:4px 0 9px}
+.lessonSteps{display:flex;gap:5px;flex-wrap:wrap}.lessonSteps button{padding:6px 9px;font-size:12px}
+#lessonText{background:#10182b;padding:10px;border-radius:10px;color:#e6eaff;line-height:1.5;min-height:68px}
 </style></head><body>
 <header><div class="brand"><div class="logo">✏️</div><div><strong>AR Drawing Studio</strong><small>Draw • Trace • Color • Create</small></div></div><button id="install" class="primary hidden">Install app</button></header>
 <main><section class="workspace">
@@ -35,6 +44,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}#trace
 <button id="camera">📷 Camera tracing</button><button id="stop" disabled>Stop camera</button>
 <label class="filebtn">＋ Open saved drawing <input id="open" type="file" accept="image/png,image/jpeg" hidden></label>
 </div><div class="section"><h2>My gallery</h2><p>Drawings saved in this browser on this device.</p><div id="gallery" class="gallery"></div><button id="clearGallery" style="width:100%;margin-top:10px">Clear gallery</button></div>
+<div class="section"><h2>Drawing library</h2><p>Choose a practice outline. It will appear as a tracing guide on your canvas.</p><div id="library" class="libraryGrid"></div></div>
+<div class="section"><h2>Step-by-step lessons</h2><p>Follow each short step, then practice on the canvas.</p><div id="lessons"></div><div id="lessonText">Choose a lesson to begin.</div><div class="lessonSteps"><button id="prevStep">← Previous</button><button id="nextStep" class="primary">Next step →</button></div></div>
 <div class="section"><h2>How to trace</h2><p>1. Import a picture.<br>2. Adjust its opacity.<br>3. Draw over the reference.<br>4. Save your finished drawing.</p><p><b>Camera note:</b> live camera tracing is not included in this starter version. It needs extra AR/camera alignment development.</p></div>
 </aside></main><footer style="text-align:center;color:#77829f;font-size:12px;padding:10px 16px 24px">AR Drawing Studio · Progressive Web App</footer>
 <script>
@@ -66,4 +77,30 @@ window.addEventListener('resize',()=>fit(true));fit(false);renderGallery();
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 let deferred;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;document.querySelector('#install').classList.remove('hidden')});
 document.querySelector('#install').onclick=async()=>{if(deferred){deferred.prompt();deferred=null}};
+
+// Built-in practice library and guided lessons (works offline; no API key needed)
+const svgArt={
+'Cute cat':`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><g fill="none" stroke="#25283a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M75 125 82 55 132 91Q150 84 168 91L218 55 225 125Q244 157 229 205Q210 258 150 258Q90 258 71 205Q56 157 75 125Z"/><path d="M110 158q12-12 24 0m32 0q12-12 24 0M137 184q13 12 26 0m-13-12v12M92 183l-35-8m36 24-38 5m153-21 35-8m-36 24 38 5"/></g></svg>`,
+'Butterfly':`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><g fill="none" stroke="#25283a" stroke-width="6" stroke-linejoin="round"><path d="M150 145C90 35 20 55 45 145Q65 205 145 165Q75 270 125 260Q155 250 150 165Q145 250 175 260Q225 270 155 165Q235 205 255 145Q280 55 210 55Q175 60 150 145Z"/><path d="M150 100v125M150 110q-35-55-48-35m48 35q35-55 48-35"/></g></svg>`,
+'Flower':`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><g fill="none" stroke="#25283a" stroke-width="6" stroke-linecap="round"><circle cx="150" cy="112" r="27"/><g><ellipse cx="150" cy="62" rx="25" ry="38"/><ellipse cx="150" cy="162" rx="25" ry="38"/><ellipse cx="100" cy="112" rx="38" ry="25"/><ellipse cx="200" cy="112" rx="38" ry="25"/></g><path d="M150 190v75m0-35q-50-35-65 5 35 25 65-5m0 15q40-35 65-5-30 30-65 5"/></g></svg>`,
+'Rocket':`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><g fill="none" stroke="#25283a" stroke-width="6" stroke-linejoin="round"><path d="M150 35Q220 80 195 190L150 230 105 190Q80 80 150 35Z"/><circle cx="150" cy="120" r="22"/><path d="m105 160-45 45 45-5m90-40 45 45-45-5M125 215l-5 35 30-20 30 20-5-35"/></g></svg>`,
+'House':`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><g fill="none" stroke="#25283a" stroke-width="6" stroke-linejoin="round"><path d="M40 140 150 48l110 92M65 130v125h170V130M125 255v-75h50v75M92 155h35v35H92zm82 0h35v35h-35z"/></g></svg>`,
+'Fish':`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><g fill="none" stroke="#25283a" stroke-width="6" stroke-linejoin="round"><path d="M45 150Q120 55 220 150Q120 245 45 150Zm175 0 48-48v96z"/><circle cx="95" cy="135" r="7"/><path d="M135 115q30 35 0 70"/></g></svg>`
+};
+const lessonsData=[
+{title:'Draw a cute cat',steps:['Start with a large rounded head shape.','Add two pointed ears on top.','Draw two eyes, a tiny nose and a smiling mouth.','Add whiskers and small details.','Trace the outline neatly, then color your cat.'],art:'Cute cat'},
+{title:'Draw a flower',steps:['Draw a small circle in the center.','Add five or six oval petals around it.','Draw a long stem below the flower.','Add two leaves on the stem.','Outline and color the petals and leaves.'],art:'Flower'},
+{title:'Draw a rocket',steps:['Draw a tall capsule shape for the body.','Add a pointed nose at the top.','Draw a round window in the middle.','Add two side fins and a flame below.','Add details and color your rocket.'],art:'Rocket'}
+];
+function svgUrl(s){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s)}
+const lib=document.querySelector('#library');
+Object.entries(svgArt).forEach(([name,svg])=>{let b=document.createElement('button');b.className='artCard';let im=document.createElement('img');im.src=svgUrl(svg);let t=document.createElement('span');t.textContent=name;b.append(im,t);b.onclick=()=>{trace.src=svgUrl(svg);trace.classList.remove('hidden');document.querySelector('#opacity').value=35;trace.style.opacity=.35;document.querySelector('#opval').textContent='35%'};lib.append(b)});
+let lessonIndex=0,stepIndex=0;
+const lessonRoot=document.querySelector('#lessons'),lessonText=document.querySelector('#lessonText');
+lessonsData.forEach((l,i)=>{let b=document.createElement('button');b.textContent='▶ '+l.title;b.style.width='100%';b.style.marginBottom='7px';b.onclick=()=>{lessonIndex=i;stepIndex=0;showLesson();trace.src=svgUrl(svgArt[l.art]);trace.classList.remove('hidden')};lessonRoot.append(b)});
+function showLesson(){let l=lessonsData[lessonIndex];lessonText.innerHTML='<b>'+l.title+' · Step '+(stepIndex+1)+' of '+l.steps.length+'</b><br>'+l.steps[stepIndex];document.querySelector('#prevStep').disabled=stepIndex===0;document.querySelector('#nextStep').textContent=stepIndex===l.steps.length-1?'Restart lesson':'Next step →'}
+document.querySelector('#prevStep').onclick=()=>{if(stepIndex>0){stepIndex--;showLesson()}};
+document.querySelector('#nextStep').onclick=()=>{let l=lessonsData[lessonIndex];stepIndex=stepIndex===l.steps.length-1?0:stepIndex+1;showLesson()};
+showLesson();
+
 </script></body></html>
