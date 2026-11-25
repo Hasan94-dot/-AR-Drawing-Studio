@@ -1,0 +1,16 @@
+{
+  "name": "AR Drawing Studio",
+  "short_name": "AR Drawing",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0c1020",
+  "theme_color": "#101326",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
